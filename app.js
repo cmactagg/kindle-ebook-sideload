@@ -43,7 +43,30 @@ app.use((err, req, res, next) => {
 });
 
 // Connect to MongoDB and start server
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/kindle-ebooks';
+// Build MongoDB URL from individual env vars if available (Railway provides these)
+// This handles special characters in passwords properly
+function getMongoUrl() {
+  if (process.env.MONGO_URL) {
+    return process.env.MONGO_URL;
+  }
+  
+  // Railway provides individual MongoDB variables
+  const user = process.env.MONGOUSER || process.env.MONGO_USER;
+  const password = process.env.MONGOPASSWORD || process.env.MONGO_PASSWORD;
+  const host = process.env.MONGOHOST || process.env.MONGO_HOST || 'localhost';
+  const port = process.env.MONGOPORT || process.env.MONGO_PORT || '27017';
+  const database = process.env.MONGO_DATABASE || 'kindle-ebooks';
+  
+  if (user && password) {
+    // URL-encode the password to handle special characters
+    const encodedPassword = encodeURIComponent(password);
+    return `mongodb://${user}:${encodedPassword}@${host}:${port}/${database}?authSource=admin`;
+  }
+  
+  return `mongodb://${host}:${port}/${database}`;
+}
+
+const MONGO_URL = getMongoUrl();
 
 mongoose.connect(MONGO_URL)
   .then(() => {
