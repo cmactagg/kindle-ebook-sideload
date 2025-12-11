@@ -1,0 +1,88 @@
+<%- include('partials/header') %>
+
+<div class="section">
+  <% if (error) { %>
+    <div class="message message-error">
+      <strong>Error:</strong> <%= error %>
+    </div>
+  <% } %>
+  
+  <% if (success) { %>
+    <div class="message message-success">
+      <strong>Success:</strong> <%= success %>
+    </div>
+  <% } %>
+  
+  <p class="count-info">
+    Ebooks: <%= ebookCount %> / <%= maxEbooks %>
+  </p>
+  
+  <a href="/upload" class="btn">Upload Ebook</a>
+</div>
+
+<div class="section">
+  <h2>Create Folder</h2>
+  <form action="/folders" method="POST">
+    <div class="form-group">
+      <label for="folderName">Folder Name:</label>
+      <input type="text" id="folderName" name="name" required maxlength="100" placeholder="Enter folder name">
+    </div>
+    <button type="submit" class="btn">Create Folder</button>
+  </form>
+</div>
+
+<% if (folders.length > 0) { %>
+<div class="section">
+  <h2>Folders</h2>
+  <ul class="list">
+    <% folders.forEach(function(folder) { %>
+      <li class="list-item">
+        <a href="/folders/<%= folder._id %>" class="list-item-title">
+          <span class="folder-icon"><%= folder.name %></span>
+        </a>
+        <span class="list-item-meta">(<%= folder.ebookCount %> ebook<%= folder.ebookCount !== 1 ? 's' : '' %>)</span>
+      </li>
+    <% }); %>
+  </ul>
+</div>
+<% } %>
+
+<div class="section">
+  <h2>Ebooks (Root)</h2>
+  
+  <% if (ebooks.length === 0) { %>
+    <p class="empty-message">No ebooks in root folder.</p>
+  <% } else { %>
+    <ul class="list">
+      <% ebooks.forEach(function(ebook) { %>
+        <li class="list-item">
+          <a href="/download/<%= ebook._id %>" class="list-item-title">
+            <%= ebook.originalName %>
+          </a>
+          <span class="list-item-meta">
+            <%= ebook.getFormattedSize() %> | 
+            Uploaded: <%= ebook.uploadedAt.toLocaleDateString() %>
+          </span>
+          <div class="list-item-actions">
+            <form action="/ebooks/<%= ebook._id %>/delete" method="POST" class="inline-form" onsubmit="return confirm('Delete this ebook?');">
+              <button type="submit" class="btn btn-small btn-danger">Delete</button>
+            </form>
+            
+            <% if (folders.length > 0) { %>
+            <form action="/ebooks/<%= ebook._id %>/move" method="POST" class="inline-form">
+              <select name="folder">
+                <% folders.forEach(function(folder) { %>
+                  <option value="<%= folder._id %>"><%= folder.name %></option>
+                <% }); %>
+              </select>
+              <button type="submit" class="btn btn-small">Move</button>
+            </form>
+            <% } %>
+          </div>
+        </li>
+      <% }); %>
+    </ul>
+  <% } %>
+</div>
+
+<%- include('partials/footer') %>

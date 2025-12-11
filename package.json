@@ -1,0 +1,27 @@
+{
+  "name": "kindle-ebook-sideload",
+  "version": "1.0.0",
+  "description": "A minimal web application for sideloading ebooks to Kindle devices",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "keywords": [
+    "kindle",
+    "ebook",
+    "sideload"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "file-type": "^19.6.0",
+    "mongoose": "^8.0.3",
+    "multer": "^2.0.2",
+    "sanitize-filename": "^1.6.3"
+  }
+}

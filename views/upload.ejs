@@ -1,0 +1,60 @@
+<%- include('partials/header') %>
+
+<div class="section">
+  <% if (error) { %>
+    <div class="message message-error">
+      <strong>Error:</strong> <%= error %>
+    </div>
+  <% } %>
+  
+  <% if (success) { %>
+    <div class="message message-success">
+      <strong>Success:</strong> <%= success %>
+    </div>
+  <% } %>
+  
+  <p><a href="/">&larr; Back to Home</a></p>
+</div>
+
+<div class="section">
+  <h2>Upload Ebook</h2>
+  
+  <p class="count-info">
+    Ebooks: <%= ebookCount %> / <%= maxEbooks %>
+  </p>
+  
+  <% if (limitReached) { %>
+    <div class="message message-error">
+      <strong>Limit Reached:</strong> You have reached the maximum of <%= maxEbooks %> ebooks. 
+      Please delete some ebooks before uploading new ones.
+    </div>
+  <% } else { %>
+    <form action="/upload" method="POST" enctype="multipart/form-data" onsubmit="this.querySelector('.status').textContent='Uploading... please wait. This may take a while for large files.';">
+      <div class="form-group">
+        <label for="ebook">Select File (max 100 MB):</label>
+        <input type="file" id="ebook" name="ebook" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="folder">Folder (optional):</label>
+        <select id="folder" name="folder">
+          <option value="">-- Root --</option>
+          <% folders.forEach(function(folder) { %>
+            <option value="<%= folder._id %>"><%= folder.name %></option>
+          <% }); %>
+        </select>
+      </div>
+      
+      <button type="submit" class="btn">Upload</button>
+      
+      <p class="status"></p>
+    </form>
+  <% } %>
+</div>
+
+<div class="section">
+  <h3>Supported Formats</h3>
+  <p>Any file format is allowed, except executables and scripts. Common ebook formats: EPUB, MOBI, AZW, AZW3, PDF, TXT, DOC, DOCX, CBZ, CBR.</p>
+</div>
+
+<%- include('partials/footer') %>
