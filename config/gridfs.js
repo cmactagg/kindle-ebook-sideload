@@ -8,6 +8,15 @@ let bucket = null;
  * @returns {GridFSBucket} The GridFS bucket instance
  */
 export function getGridFSBucket() {
+  // readyState: 0 = disconnected, 1 = connected, 2 = connecting, 3 = disconnecting
+  const isConnected = mongoose.connection.readyState === 1;
+  
+  // Reset bucket if connection is stale
+  if (!isConnected && bucket) {
+    console.log('GridFS bucket reset due to stale connection');
+    bucket = null;
+  }
+  
   if (!bucket) {
     const db = mongoose.connection.db;
     if (!db) {
